@@ -23,41 +23,40 @@ class Selector(object):
     def __repr__(self):
         return 'Selector <{}>'.format(self.name)
 
+    @classmethod
+    def build(cls, sel, _direct=False):
+        subs = regex.split(SUBSEL_RE, sel, 1)
+
+        if len(subs) == 1:
+            return cls.build_sub(subs[0], _direct=_direct)
+
+        sub, sep, nxt = subs
+
+        return cls.build_sub(sub, sep=sep, _next=nxt, _direct=_direct)
+
+    @classmethod
+    def build_sub(cls, sub, sep=None, _next=None, _direct=False):
+        if _next is not None:
+            _next = cls.build(_next, _direct=sep is not None)
+
+        typ = regex.findall(TYPRE, sub)
+        id_ = regex.findall(IDRE, sub)
+        classes = regex.findall(CLSRE, sub)
+        pseudos = regex.findall(PSEUDORE, sub)
+
+        if typ:
+            typ = typ[0]
+
+        if id_:
+            id_ = id_[0]
+
+        return cls(sub, typ=typ, id_=id_, classes=classes, pseudos=pseudos,
+                   _next=_next, _direct=_direct)
+
 
 def sel(selector):
     for sel in selector.split(','):
-        yield build_selector(sel.strip())
-
-
-def build_selector(sel, _direct=False):
-    subs = regex.split(SUBSEL_RE, sel, 1)
-
-    if len(subs) == 1:
-        return build_sub(subs[0], _direct=_direct)
-
-    sub, sep, nxt = subs
-
-    return build_sub(sub, sep=sep, _next=nxt, _direct=_direct)
-
-
-def build_sub(sub, sep=None, _next=None, _direct=False):
-    if _next is not None:
-        _next = build_selector(_next, _direct=sep is not None)
-
-    typ = regex.findall(TYPRE, sub)
-    id_ = regex.findall(IDRE, sub)
-    classes = regex.findall(CLSRE, sub)
-    pseudos = regex.findall(PSEUDORE, sub)
-
-    if typ:
-        typ = typ[0]
-
-    if id_:
-        id_ = id_[0]
-
-    return Selector(
-        sub, typ=typ, id_=id_, classes=classes, pseudos=pseudos,
-        _next=_next, _direct=_direct)
+        yield Selector.build(sel.strip())
 
 
 if __name__ == '__main__':
@@ -193,7 +192,7 @@ if __name__ == '__main__':
         def _match_pseudos(self, sobj, d):
             for p in sobj.pseudos:
                 if p[0] == 'not':
-                    yield not self._match_rules(build_selector(p[1]), d)
+                    yield not self._match_rules(Selector.build(p[1]), d)
                 elif p[0] == 'extends':
                     yield p[1] in getattr(d, 'extends', [])
 
