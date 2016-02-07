@@ -128,6 +128,18 @@ class TestSObjs(unittest.TestCase):
         self.assertEqual(sobjs[0].attrs[0].op, '=')
         self.assertEqual(sobjs[0].attrs[0].rgt, '1')
 
+    def test_deep_attrs(self):
+        sobjs = Selector.parse('[name=1] > [name=2]')
+
+        self.assertEqual(len(sobjs), 1)
+        self.assertEqual(len(sobjs[0].attrs), 1)
+        self.assertEqual(sobjs[0].attrs[0].lft, 'name')
+        self.assertEqual(sobjs[0].attrs[0].op, '=')
+        self.assertEqual(sobjs[0].attrs[0].rgt, '1')
+        self.assertEqual(sobjs[0].next_selector.attrs[0].lft, 'name')
+        self.assertEqual(sobjs[0].next_selector.attrs[0].op, '=')
+        self.assertEqual(sobjs[0].next_selector.attrs[0].rgt, '2')
+
 
 class CustomMatchEngine(MatchEngine):
     def __init__(self):
