@@ -31,9 +31,6 @@ setup(
         'click==6.2',
         'Pygments==2.1',
         'regex==2016.1.10',
-        'astor==0.6',
-    ],
-    dependency_links=[
-        '-e git://github.com/berkerpeksag/astor.git@d254ad799fb0866e03d658cca8794b73411c89ef#egg=astor==0.6'  # noqa
+        'astor==0.5',
     ]
 )

@@ -10,7 +10,7 @@ class ASTMatchEngine(MatchEngine):
         self.register_pseudo('extends', self.pseudo_extends)
 
     def match(self, selector, filename):
-        module = astor.code_to_ast.parse_file(filename)
+        module = astor.parsefile(filename)
         for match in super().match(selector, module.body):
             lineno = match.lineno
             if isinstance(match, (ast.ClassDef, ast.FunctionDef)):
