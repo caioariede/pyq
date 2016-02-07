@@ -63,8 +63,7 @@ class Selector(object):
         selectors = []
 
         combinator = None
-
-        ref = {'prev': None}
+        prev_selector = None
 
         while True:
             match = regex.search(RE.comma, string)
@@ -88,10 +87,10 @@ class Selector(object):
                 seltext = string[:pos]
                 string = string[pos:]
                 selector = Selector(seltext, combinator=combinator)
-                if combinator is not None and ref['prev']:
-                    ref['prev'].next_selector = ref['prev'] = selector
+                if combinator is not None and prev_selector:
+                    prev_selector.next_selector = prev_selector = selector
                 else:
-                    ref['prev'] = selector
+                    prev_selector = selector
                     selectors.append(selector)
                 continue
 
