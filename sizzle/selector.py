@@ -39,9 +39,14 @@ class Selector(object):
         self.classes = regex.findall(RE.class_selector, name)
 
         self.pseudos = [
-            Pseudo(*a) for a in regex.findall(RE.pseudo_selector, name)]
+            Pseudo(*a)
+            for a in regex.findall(RE.pseudo_selector, name)
+        ]
+
         self.attrs = [
-            Attr(*a) for a in regex.findall(RE.attr_selector, name)]
+            Attr(l, o, r.strip())
+            for l, o, r in regex.findall(RE.attr_selector, name)
+        ]
 
         for typ in regex.findall(RE.type_selector, name, 1):
             self.typ = typ

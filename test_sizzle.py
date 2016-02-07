@@ -120,7 +120,7 @@ class TestSObjs(unittest.TestCase):
         self.assertEqual(sobjs[0].attrs[0].rgt, '1')
 
     def test_attrs_whitespace(self):
-        sobjs = Selector.parse('[ name=1]')
+        sobjs = Selector.parse('[ name = 1 ]')
 
         self.assertEqual(len(sobjs), 1)
         self.assertEqual(len(sobjs[0].attrs), 1)
