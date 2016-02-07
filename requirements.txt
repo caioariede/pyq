@@ -1,3 +1,0 @@
--e git://github.com/berkerpeksag/astor.git#egg=astor==0.6
-click==6.2
-regex==2016.1.10
