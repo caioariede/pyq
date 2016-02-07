@@ -128,7 +128,7 @@ class TestSObjs(unittest.TestCase):
         self.assertEqual(sobjs[0].attrs[0].op, '=')
         self.assertEqual(sobjs[0].attrs[0].rgt, '1')
 
-# test custom matcher
+
 class CustomMatchEngine(MatchEngine):
     def __init__(self):
         super().__init__()
@@ -136,6 +136,8 @@ class CustomMatchEngine(MatchEngine):
 
     @staticmethod
     def pseudo_extends(matcher, node, value):
+        if not value:
+            return hasattr(node, 'extends') and not node.extends
         return value in getattr(node, 'extends', [])
 
     def match_type(self, typ, node):
@@ -152,6 +154,7 @@ class CustomMatchEngine(MatchEngine):
     def iter_data(self, data):
         for node in data:
             yield node, getattr(node, 'body', None)
+
 
 class TestCustomMatcher(unittest.TestCase):
     from collections import namedtuple
@@ -191,8 +194,8 @@ class TestCustomMatcher(unittest.TestCase):
     def test_pseudos(self):
         self.assertEqual(len(self.match(':extends(object)')), 1)
 
-    # def test_pseudos_noargs(self):
-    #     self.assertEqual(len(self.match(':extends()')), 1)
+    def test_pseudos_noargs(self):
+        self.assertEqual(len(self.match(':extends()')), 1)
 
     def test_nested_pseudos(self):
         self.assertEqual(
@@ -201,5 +204,6 @@ class TestCustomMatcher(unittest.TestCase):
             len(self.match(':extends(object):not(def)')), 1)
         self.assertEqual(
             len(self.match(':not(def)')), 2)
+
 
 unittest.main(failfast=True)
