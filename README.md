@@ -7,18 +7,29 @@ Search Python code by using jQuery-like selectors
 
 ## Usage
 
-    pyq 'selector' [directory]
+    pyq [OPTIONS] SELECTOR [PATH]
 
 ## Examples
 
-    $ pyq 'class:extends(forms.Widget)' django/forms
-    django/forms/fields.py:278 class FloatField(IntegerField):
-    django/forms/fields.py:315 class DecimalField(IntegerField):
+```python
+❯ pyq 'class:extends(forms.Widget)' django/forms
+django/forms/fields.py:278 class FloatField(IntegerField):
+django/forms/fields.py:315 class DecimalField(IntegerField):
+```
 
-    $ pyq 'class[name=FloatField]' django/forms
-    django/forms/fields.py:278 class FloatField(IntegerField):
-    
-    $ pyq 'class[name=FloatField] > def' django/forms
-    django/forms/fields.py:283     def to_python(self, value):
-    django/forms/fields.py:299     def validate(self, value):
-    django/forms/fields.py:308     def widget_attrs(self, widget):
+```python
+❯ pyq 'class[name=FloatField]' django/forms
+django/forms/fields.py:278 class FloatField(IntegerField):
+```    
+
+```python
+❯ pyq 'class[name=FloatField] > def' django/forms
+django/forms/fields.py:283     def to_python(self, value):
+django/forms/fields.py:299     def validate(self, value):
+django/forms/fields.py:308     def widget_attrs(self, widget):
+```
+
+```python
+❯ pyq 'class[name=FloatField] > def[name^=to]' django/forms
+django/forms/fields.py:283     def to_python(self, value):
+```
