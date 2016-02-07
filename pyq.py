@@ -1,18 +1,3 @@
-"""
-
-.function_name  | .name:fn
-.class_name     | .name:cls
-
-fn[name=foo]
-cls[name=foo][extends=bar]A
-import[from=os.path]
-
-.class_name > .method_name
-
-
-
-"""
-
 import click
 import os
 
@@ -49,7 +34,8 @@ def display_matches(m, selector, filename):
                         break
                     if i == lineno:
                         text = line.decode('utf-8')
-                        print('{}:{} {}'.format(filename, i, text), end='')
+                        output = '{}:{} {}'.format(filename, i, text)
+                        click.echo(output, nl=False)
                         break
                     i += 1
 

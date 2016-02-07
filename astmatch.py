@@ -13,7 +13,7 @@ class ASTMatchEngine(MatchEngine):
         module = astor.code_to_ast.parse_file(filename)
         for match in super().match(selector, module.body):
             lineno = match.lineno
-            if isinstance(match, ast.ClassDef):
+            if isinstance(match, (ast.ClassDef, ast.FunctionDef)):
                 for d in match.decorator_list:
                     lineno += 1
             yield match, lineno
@@ -38,6 +38,26 @@ class ASTMatchEngine(MatchEngine):
 
     def match_id(self, id_, node):
         return node.name == id_
+
+    def match_attr(self, lft, op, rgt, node):
+        value = getattr(node, lft, None)
+
+        if op == '=':
+            return value == rgt
+
+        if op == '!=':
+            return value != rgt
+
+        if op == '*=':
+            return rgt in value
+
+        if op == '^=':
+            return value.startswith(rgt)
+
+        if op == '$=':
+            return value.endswith(rgt)
+
+        raise Exception('Attribute operator {} not implemented'.format(op))
 
     def iter_data(self, data):
         for node in data:

@@ -37,6 +37,9 @@ class MatchEngine(object):
     def match_node(self, selector, node):
         match = all(self.match_rules(selector, node))
 
+        if match and selector.attrs:
+            match &= all(self.match_attrs(selector, node))
+
         if match and selector.pseudos:
             match &= all(self.match_pseudos(selector, node))
 
@@ -49,9 +52,15 @@ class MatchEngine(object):
         if selector.id_:
             yield self.match_id(selector.id_, node)
 
-    def match_pseudos(self, sobj, d):
-        for p in sobj.pseudos:
-            yield self.pseudo_fns[p[0]](self, d, p[1])
+    def match_attrs(self, selector, node):
+        for a in selector.attrs:
+            lft, op, rgt = a
+            yield self.match_attr(lft, op, rgt, node)
+
+    def match_pseudos(self, selector, d):
+        for p in selector.pseudos:
+            name, value = p
+            yield self.pseudo_fns[name](self, d, value)
 
     def _iter_data(self, data):
         for tupl in self.iter_data(data):
@@ -65,6 +74,9 @@ class MatchEngine(object):
         raise NotImplementedError
 
     def match_id(self, id_, node):
+        raise NotImplementedError
+
+    def match_attr(self, lft, op, rgt, no):
         raise NotImplementedError
 
     def iter_data(self, data):
