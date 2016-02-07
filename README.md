@@ -7,7 +7,7 @@ Search Python code by using jQuery-like selectors
 
 ## Usage
 
-    pyq 'selector' [directory]
+    pyq [OPTIONS] SELECTOR [PATH]
 
 ## Examples
 
