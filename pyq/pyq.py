@@ -1,7 +1,7 @@
 import click
 import os
 
-from astmatch import ASTMatchEngine
+from .astmatch import ASTMatchEngine
 from pygments import highlight
 from pygments.lexers.python import PythonLexer
 from pygments.formatters.terminal import TerminalFormatter
@@ -44,5 +44,9 @@ def display_matches(m, selector, filename):
                     i += 1
 
 
-if __name__ == '__main__':
+def main():
     search()
+
+
+if __name__ == '__main__':
+    main()
