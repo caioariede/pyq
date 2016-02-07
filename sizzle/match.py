@@ -12,7 +12,7 @@ class MatchEngine(object):
 
     @staticmethod
     def pseudo_not(matcher, node, value):
-        return not matcher.match_node(Selector.build(value), node)
+        return not matcher.match_node(Selector.parse(value)[0], node)
 
     def match(self, selector, data):
         selectors = Selector.parse(selector)
@@ -24,13 +24,14 @@ class MatchEngine(object):
             match = self.match_node(selector, node)
 
             if match:
-                if selector._next:
+                next_selector = selector.next_selector
+                if next_selector:
                     if body:
-                        yield from self.match_data(selector._next, body)
+                        yield from self.match_data(next_selector, body)
                 else:
                     yield node
 
-            if body and not selector._direct:
+            if body and not selector.combinator == Selector.CHILD:
                 yield from self.match_data(selector, body)
 
     def match_node(self, selector, node):

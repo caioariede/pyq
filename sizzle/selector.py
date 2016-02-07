@@ -1,44 +1,97 @@
 import regex
 
+from collections import namedtuple
 
-ID = r'_?[A-Za-z0-9_]*'
 
-SUBSEL_RE = r'\s*(>)\s*|\s+'
+ID = r'_?[A-Za-z0-9_]+|_'
+WS = r'[\x20\t\r\n\f]*'
+
+COMMARE = '^{ws},{ws}'.format(ws=WS)
 TYPRE = '^{id}'.format(id=ID)
 IDRE = '#({id})'.format(id=ID)
 CLSRE = r'\.(' + ID + ')'
 PSEUDORE = r':({id})\(([^()]+|(?R)+)\)'.format(id=ID)
+ATTRRE = r'\[{ws}({id}){ws}([*^$|!~]?=)(.*)\]'.format(id=ID, ws=WS)
+COMBINATOR = r'^{ws}([>+~ ]){ws}'.format(ws=WS)
+SELECTOR = '(?:(?:{typ})?({id}|{cls}|{pseudo}|{attr})+|{typ})'.format(
+    typ=ID, id=IDRE, cls=CLSRE, pseudo=PSEUDORE, attr=ATTRRE)
+
+
+Attr = namedtuple('Attr', 'lft op rgt')
+Pseudo = namedtuple('Pseudo', 'name value')
 
 
 class Selector(object):
-    def __init__(self, name, id_=None, typ=None, classes=None, pseudos=None,
-                 _next=None, _direct=False):
+    DESCENDANT = ' '
+    CHILD = '>'
+    SIBLING = '~'
+    ADJACENT = '+'
+    NOT_SET = None
+
+    def __init__(self, name, combinator=None):
         self.name = name
-        self.typ = typ
-        self.id_ = id_
-        self.classes = classes or []
-        self.pseudos = pseudos or []
-        self._next = _next
-        self._direct = _direct
+        self.combinator = combinator
+        self.next_selector = None
+
+        self.classes = regex.findall(CLSRE, name)
+        self.pseudos = [Pseudo(*a) for a in regex.findall(PSEUDORE, name)]
+        self.attrs = [Attr(*a) for a in regex.findall(ATTRRE, name)]
+
+        for typ in regex.findall(TYPRE, name, 1):
+            self.typ = typ
+            break
+        else:
+            self.typ = None
+
+        for id_ in regex.findall(IDRE, name, 1):
+            self.id_ = id_
+            break
+        else:
+            self.id_ = None
 
     def __repr__(self):
         return 'Selector <{}>'.format(self.name)
 
     @staticmethod
     def parse(string):
-        for sel in string.split(','):
-            yield Selector.build(sel.strip())
+        selectors = []
 
-    @classmethod
-    def build(cls, sel, _direct=False):
-        subs = regex.split(SUBSEL_RE, sel, 1)
+        combinator = None
 
-        if len(subs) == 1:
-            return cls.build_sub(subs[0], _direct=_direct)
+        ref = {'prev': None}
 
-        sub, sep, nxt = subs
+        while True:
+            match = regex.search(COMMARE, string)
+            if match:
+                # skip comma
+                _, pos = match.span()
+                string = string[pos:]
+                continue
 
-        return cls.build_sub(sub, sep=sep, _next=nxt, _direct=_direct)
+            match = regex.search(COMBINATOR, string)
+            if match:
+                _, pos = match.span()
+                combinator = string[:pos].strip()
+                string = string[pos:]
+            else:
+                combinator = None
+
+            match = regex.search(SELECTOR, string)
+            if match:
+                _, pos = match.span()
+                seltext = string[:pos]
+                string = string[pos:]
+                selector = Selector(seltext, combinator=combinator)
+                if combinator is not None and ref['prev']:
+                    ref['prev'].next_selector = ref['prev'] = selector
+                else:
+                    ref['prev'] = selector
+                    selectors.append(selector)
+                continue
+
+            break
+
+        return selectors
 
     @classmethod
     def build_sub(cls, sub, sep=None, _next=None, _direct=False):
@@ -49,6 +102,7 @@ class Selector(object):
         id_ = regex.findall(IDRE, sub)
         classes = regex.findall(CLSRE, sub)
         pseudos = regex.findall(PSEUDORE, sub)
+        attrs = regex.findall(ATTRRE, sub)
 
         if typ:
             typ = typ[0]
@@ -57,4 +111,4 @@ class Selector(object):
             id_ = id_[0]
 
         return cls(sub, typ=typ, id_=id_, classes=classes, pseudos=pseudos,
-                   _next=_next, _direct=_direct)
+                   attrs=attrs, _next=_next, _direct=_direct)
