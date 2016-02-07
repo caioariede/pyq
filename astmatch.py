@@ -1,0 +1,44 @@
+from sizzle.match import MatchEngine
+
+import ast
+import astor
+
+
+class ASTMatchEngine(MatchEngine):
+    def __init__(self):
+        super().__init__()
+        self.register_pseudo('extends', self.pseudo_extends)
+
+    def match(self, selector, filename):
+        module = astor.code_to_ast.parse_file(filename)
+        for match in super().match(selector, module.body):
+            lineno = match.lineno
+            if isinstance(match, ast.ClassDef):
+                for d in match.decorator_list:
+                    lineno += 1
+            yield match, lineno
+
+    @staticmethod
+    def pseudo_extends(matcher, node, value):
+        for base in node.bases:
+            base_str = astor.to_source(base).rstrip()
+            if base_str == value:
+                return True
+            elif '.' in base_str and value in base_str:
+                parts = base_str.split('.')
+                if value in parts:
+                    return True
+
+    def match_type(self, typ, node):
+        if typ == 'class':
+            return isinstance(node, ast.ClassDef)
+
+        if typ == 'def':
+            return isinstance(node, ast.FunctionDef)
+
+    def match_id(self, id_, node):
+        return node.name == id_
+
+    def iter_data(self, data):
+        for node in data:
+            yield node, getattr(node, 'body', None)

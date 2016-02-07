@@ -16,7 +16,7 @@ class RE(object):
     type_selector = '^{id}'.format(id=id)
     id_selector = '#({id})'.format(id=id)
     class_selector = r'\.(' + id + ')'
-    pseudo_selector = r':({id})\(([^()]+|(?R)+)\)'.format(id=id)
+    pseudo_selector = r':({id})\(([^()]+|(?R)?)\)'.format(id=id)
     attr_selector = r'\[{ws}({id}){ws}([*^$|!~]?=)(.*)\]'.format(id=id, ws=ws)
 
     selector = '(?:(?:{typ})?({id}|{cls}|{pseudo}|{attr})+|{typ})'.format(
