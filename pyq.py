@@ -2,6 +2,9 @@ import click
 import os
 
 from astmatch import ASTMatchEngine
+from pygments import highlight
+from pygments.lexers.python import PythonLexer
+from pygments.formatters.terminal import TerminalFormatter
 
 
 @click.command()
@@ -34,6 +37,7 @@ def display_matches(m, selector, filename):
                         break
                     if i == lineno:
                         text = line.decode('utf-8')
+                        text = highlight(text, PythonLexer(), TerminalFormatter())  # noqa
                         output = '{}:{} {}'.format(filename, i, text)
                         click.echo(output, nl=False)
                         break
