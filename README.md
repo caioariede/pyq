@@ -20,7 +20,11 @@ A command-line tool to search for Python code using jQuery-like selectors
 
 ##### Type
 
-`class`, `def` and `import`
+| Name   | Attributes                                     |
+| ------ | ---------------------------------------------- |
+| class  | class `name`                                   |
+| def    | def `name`                                     |
+| import | import `name`<br>import `name` as `name`<br>from `from` import `name`     |
 
 ##### Name
 
