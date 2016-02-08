@@ -1,6 +1,8 @@
 # pyq
 Search Python code by using jQuery-like selectors
 
+[![PyPI version](https://badge.fury.io/py/pyqtool.svg)](https://badge.fury.io/py/pyqtool)
+
 ## Installation
 
     pip install pyqtool
