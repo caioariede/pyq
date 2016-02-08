@@ -5,7 +5,7 @@ VERSION = '0.0.1'
 
 
 setup(
-    name='pyq',
+    name='pyqtool',
     version=VERSION,
     description="Search Python code with jQuery-like selectors",
     author="Caio Ariede",
