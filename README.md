@@ -4,14 +4,36 @@ A command-line tool to search for Python code using jQuery-like selectors
 
 [![PyPI version](https://badge.fury.io/py/pyqtool.svg)](https://badge.fury.io/py/pyqtool)
 
+
 ## Installation
 
     pip install pyqtool
+
 
 ## Usage
 
     pyq2 [OPTIONS] SELECTOR [PATH]  # Python 2.x
     pyq3 [OPTIONS] SELECTOR [PATH]  # Python 3.x
+
+
+## Available selectors
+
+##### Type
+
+`class`, `def` and `import`
+
+##### Name
+
+`#classname` or `#methodname`
+
+#### Attributes
+
+`[name=value]`, `[name!=value]`, `[name*=value]`, `[name^=value]` and `[name$=value]`
+
+#### Pseudo-selectors
+
+`:extends(classname)` and `:not(selector)`
+
 
 ## Examples
 
