@@ -36,10 +36,26 @@ class ASTMatchEngine(MatchEngine):
         if typ == 'def':
             return isinstance(node, ast.FunctionDef)
 
+        if typ == 'import':
+            return isinstance(node, (ast.Import, ast.ImportFrom))
+
     def match_id(self, id_, node):
         return node.name == id_
 
     def match_attr(self, lft, op, rgt, node):
+        if lft == 'from':
+            if isinstance(node, ast.ImportFrom):
+                lft = 'module'
+        elif lft == 'name':
+            if isinstance(node, (ast.Import, ast.ImportFrom)):
+                for alias in node.names:
+                    if alias.asname:
+                        if self.match_attr('asname', op, rgt, alias):
+                            return True
+                    if self.match_attr('name', op, rgt, alias):
+                        return True
+                return False
+
         value = getattr(node, lft, None)
 
         if op == '=':
