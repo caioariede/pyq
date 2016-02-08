@@ -34,6 +34,10 @@ A command-line tool to search for Python code using jQuery-like selectors
 
 `:extends(classname)` and `:not(selector)`
 
+#### Combinators
+
+`parent > child`, `parent descendant`
+
 
 ## Examples
 
