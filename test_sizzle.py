@@ -149,6 +149,15 @@ class TestSObjs(unittest.TestCase):
         self.assertEqual(sobjs[0].next_selector.attrs[0].op, '=')
         self.assertEqual(sobjs[0].next_selector.attrs[0].rgt, '2')
 
+    def test_attr_in_pseudo(self):
+        sobjs = Selector.parse(':not([name=1])')
+
+        self.assertEqual(len(sobjs), 1)
+        self.assertEqual(len(sobjs[0].attrs), 0)
+        self.assertEqual(len(sobjs[0].pseudos), 1)
+        self.assertEqual(sobjs[0].pseudos[0].name, 'not')
+        self.assertEqual(sobjs[0].pseudos[0].value, '[name=1]')
+
 
 class CustomMatchEngine(MatchEngine):
     def __init__(self):

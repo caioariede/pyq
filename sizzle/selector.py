@@ -13,10 +13,10 @@ class RE(object):
     comma = '^{ws},{ws}'.format(ws=ws)
     combinator = r'^{ws}([>+~ ]){ws}'.format(ws=ws)
 
-    type_selector = '^{id}'.format(id=id)
+    type_selector = '({id})'.format(id=id)
     id_selector = '#({id})'.format(id=id)
     class_selector = r'\.(' + id + ')'
-    pseudo_selector = r':({id})\(([^()]+|(?R)?)\)'.format(id=id)
+    pseudo_selector = r'(:({id})\(([^()]+|(?1)?)\))'.format(id=id)
     attr_selector = r'\[{ws}({id}){ws}([*^$|!~]?=)(.*?)\]'.format(id=id, ws=ws)
 
     selector = '(?:(?:{typ})?({id}|{cls}|{pseudo}|{attr})+|{typ})'.format(
@@ -36,29 +36,48 @@ class Selector(object):
         self.combinator = combinator
         self.next_selector = None
 
-        self.classes = regex.findall(RE.class_selector, name)
+        selector_patterns = {
+            'types': RE.type_selector,
+            'ids': RE.id_selector,
+            'classes': RE.class_selector,
+            'pseudos': RE.pseudo_selector,
+            'attrs': RE.attr_selector,
+        }
 
-        self.pseudos = [
-            Pseudo(*a)
-            for a in regex.findall(RE.pseudo_selector, name)
-        ]
+        matches = {}
+
+        while True:
+            pattern_matched = False
+            for key, pattern in selector_patterns.items():
+                match = regex.search(r'^{}'.format(pattern), name)
+                if match:
+                    i, pos = match.span()
+                    if key not in matches:
+                        matches[key] = []
+                    matches[key].append(match.groups())
+                    name = name[pos:]
+                    pattern_matched = True
+            if not pattern_matched:
+                break
+
+        self.typ = None
+        for types in matches.pop('types', []):
+            self.typ = types[0]
+
+        self.id_ = None
+        for ids in matches.pop('ids', []):
+            self.id_ = ids[0]
+
+        self.classes = [a[0] for a in matches.pop('classes', [])]
 
         self.attrs = [
             Attr(l, o, r.strip())
-            for l, o, r in regex.findall(RE.attr_selector, name)
+            for l, o, r in matches.pop('attrs', [])
         ]
-
-        for typ in regex.findall(RE.type_selector, name, 1):
-            self.typ = typ
-            break
-        else:
-            self.typ = None
-
-        for id_ in regex.findall(RE.id_selector, name, 1):
-            self.id_ = id_
-            break
-        else:
-            self.id_ = None
+        self.pseudos = [
+            Pseudo(*a[1:])
+            for a in matches.pop('pseudos', [])
+        ]
 
     def __repr__(self):
         return 'Selector <{}>'.format(self.name)
