@@ -1,13 +1,14 @@
 # pyq
 Search Python code by using jQuery-like selectors
 
-## Installation (not yet on PyPI)
+## Installation
 
-    pip install https://github.com/caioariede/pyq/archive/master.zip
+    pip install pyqtool
 
 ## Usage
 
-    pyq [OPTIONS] SELECTOR [PATH]
+    pyq2 [OPTIONS] SELECTOR [PATH]  # Python 2.x
+    pyq3 [OPTIONS] SELECTOR [PATH]  # Python 3.x
 
 ## Examples
 
