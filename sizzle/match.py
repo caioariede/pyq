@@ -16,8 +16,13 @@ class MatchEngine(object):
 
     def match(self, selector, data):
         selectors = Selector.parse(selector)
+        nodeids = {}
         for selector in selectors:
-            yield from self.match_data(selector, data)
+            for node in self.match_data(selector, data):
+                nodeid = id(node)
+                if nodeid not in nodeids:
+                    nodeids[nodeid] = None
+                    yield node
 
     def match_data(self, selector, data):
         for node, body in self._iter_data(data):
