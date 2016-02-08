@@ -1,5 +1,6 @@
 # pyq
-Search Python code using jQuery-like selectors.
+
+A command-line tool to search for Python code using jQuery-like selectors
 
 [![PyPI version](https://badge.fury.io/py/pyqtool.svg)](https://badge.fury.io/py/pyqtool)
 
