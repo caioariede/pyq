@@ -6,12 +6,12 @@ import astor
 
 class ASTMatchEngine(MatchEngine):
     def __init__(self):
-        super().__init__()
+        super(ASTMatchEngine, self).__init__()
         self.register_pseudo('extends', self.pseudo_extends)
 
     def match(self, selector, filename):
         module = astor.parsefile(filename)
-        for match in super().match(selector, module.body):
+        for match in super(ASTMatchEngine, self).match(selector, module.body):
             lineno = match.lineno
             if isinstance(match, (ast.ClassDef, ast.FunctionDef)):
                 for d in match.decorator_list:

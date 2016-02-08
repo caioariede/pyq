@@ -1,13 +1,16 @@
 from setuptools import setup
 
+import sys
 
-VERSION = '0.0.1'
+
+VERSION = '0.0.2'
+PYVERSION = sys.version_info.major
 
 
 setup(
     name='pyqtool',
     version=VERSION,
-    description="Search Python code with jQuery-like selectors",
+    description="Search Python code using jQuery-like selectors",
     author="Caio Ariede",
     author_email="caio.ariede@gmail.com",
     url="http://github.com/caioariede/pyq",
@@ -16,7 +19,7 @@ setup(
     platforms=["any"],
     packages=['pyq', 'sizzle'],
     entry_points={
-        'console_scripts': ['pyq = pyq.pyq:main'],
+        'console_scripts': ['pyq{} = pyq.pyq:main'.format(PYVERSION)],
     },
     classifiers=[
         "Intended Audience :: Developers",

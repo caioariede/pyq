@@ -161,7 +161,7 @@ class TestSObjs(unittest.TestCase):
 
 class CustomMatchEngine(MatchEngine):
     def __init__(self):
-        super().__init__()
+        super(CustomMatchEngine, self).__init__()
         self.register_pseudo('extends', self.pseudo_extends)
 
     @staticmethod

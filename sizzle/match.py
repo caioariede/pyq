@@ -32,12 +32,14 @@ class MatchEngine(object):
                 next_selector = selector.next_selector
                 if next_selector:
                     if body:
-                        yield from self.match_data(next_selector, body)
+                        for node in self.match_data(next_selector, body):
+                            yield node
                 else:
                     yield node
 
             if body and not selector.combinator == Selector.CHILD:
-                yield from self.match_data(selector, body)
+                for node in self.match_data(selector, body):
+                    yield node
 
     def match_node(self, selector, node):
         match = all(self.match_rules(selector, node))
