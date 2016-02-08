@@ -41,3 +41,12 @@ Search for methods whose name starts with `to` under the `FloatField` class.
 ❯ pyq 'class[name=FloatField] > def[name^=to]' django/forms
 django/forms/fields.py:283     def to_python(self, value):
 ```
+
+Search for import statements importing `Counter`.
+
+```python
+❯ pyq 'import[from=collections][name=Counter]' django/
+django/apps/registry.py:5 from collections import Counter, OrderedDict, defaultdict
+django/template/utils.py:3 from collections import Counter, OrderedDict
+django/test/testcases.py:14 from collections import Counter
+```
