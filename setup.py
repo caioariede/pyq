@@ -3,7 +3,7 @@ from setuptools import setup
 import sys
 
 
-VERSION = '0.0.2'
+VERSION = '0.0.3'
 PYVERSION = sys.version_info.major
 
 
