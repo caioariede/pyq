@@ -6,6 +6,7 @@ class MatchEngine(object):
 
     def __init__(self):
         self.register_pseudo('not', self.pseudo_not)
+        self.register_pseudo('has', self.pseudo_has)
 
     def register_pseudo(self, name, fn):
         self.pseudo_fns[name] = fn
@@ -13,6 +14,12 @@ class MatchEngine(object):
     @staticmethod
     def pseudo_not(matcher, node, value):
         return not matcher.match_node(Selector.parse(value)[0], node)
+
+    @staticmethod
+    def pseudo_has(matcher, node, value):
+        for node, body in matcher.iter_data([node]):
+            if body:
+                return any(matcher.match_data(Selector.parse(value)[0], body))
 
     def match(self, selector, data):
         selectors = Selector.parse(selector)
@@ -67,6 +74,8 @@ class MatchEngine(object):
     def match_pseudos(self, selector, d):
         for p in selector.pseudos:
             name, value = p
+            if name not in self.pseudo_fns:
+                raise Exception('Selector not implemented: {}'.format(name))
             yield self.pseudo_fns[name](self, d, value)
 
     def _iter_data(self, data):

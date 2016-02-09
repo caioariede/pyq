@@ -8,3 +8,9 @@ class Foo(object):
 
 class Bar(object):
     pass
+
+
+class Bang(object):
+    class Baz(object):
+        def bar(self):
+            pass

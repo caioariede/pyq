@@ -199,9 +199,15 @@ class TestCustomMatcher(unittest.TestCase):
                 self.DEF('bar'),
                 self.CLS('Test2', [], [
                     self.DEF('baz'),
-                ])
+                ]),
+                self.CLS('Test3', [], [
+                    self.CLS('Test5', [], [
+                        self.DEF('bang'),
+                    ]),
+                ]),
             ]),
             self.DEF('baz'),
+            self.CLS('Test4', [], []),
         ]
 
         self.matcher = CustomMatchEngine()
@@ -211,11 +217,11 @@ class TestCustomMatcher(unittest.TestCase):
         self.match = lambda s: list(self.matcher.match(s, self.data))
 
     def test_typ(self):
-        self.assertEqual(len(self.match('class')), 2)
-        self.assertEqual(len(self.match('class, def')), 6)
+        self.assertEqual(len(self.match('class')), 5)
+        self.assertEqual(len(self.match('class, def')), 10)
 
     def test_child(self):
-        self.assertEqual(len(self.match('class > def')), 3)
+        self.assertEqual(len(self.match('class > def')), 4)
 
     def test_ids(self):
         self.assertEqual(len(self.match('def#bla')), 0)
@@ -225,15 +231,19 @@ class TestCustomMatcher(unittest.TestCase):
         self.assertEqual(len(self.match(':extends(object)')), 1)
 
     def test_pseudos_noargs(self):
-        self.assertEqual(len(self.match(':extends()')), 1)
+        self.assertEqual(len(self.match(':extends()')), 4)
 
     def test_nested_pseudos(self):
         self.assertEqual(
-            len(self.match(':not(:extends(object))')), 5)
+            len(self.match(':not(:extends(object))')), 9)
         self.assertEqual(
             len(self.match(':extends(object):not(def)')), 1)
         self.assertEqual(
-            len(self.match(':not(def)')), 2)
+            len(self.match(':not(def)')), 5)
+
+    def test_pseudo_has(self):
+        self.assertEqual(len(self.match(':has(def)')), 4)
+        self.assertEqual(len(self.match(':has(> def)')), 3)
 
 
 unittest.main(failfast=True)
