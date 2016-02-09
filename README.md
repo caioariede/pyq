@@ -18,33 +18,46 @@ A command-line tool to search for Python code using jQuery-like selectors
 
 ## Available selectors
 
-##### Type
+##### Type selectors
 
-| Name   | Attributes                                     |
-| ------ | ---------------------------------------------- |
-| class  | class `name`                                   |
-| def    | def `name`                                     |
+| Name   | Attributes                                                                |
+| ------ | ------------------------------------------------------------------------- |
+| class  | class `name`                                                              |
+| def    | def `name`                                                                |
 | import | import `name`<br>import `name` as `name`<br>from `from` import `name`     |
 
-##### Name
+##### ID/Name selector
 
-`#classname` or `#functionname`
+| Syntax   | Description                              |
+| -------- | ---------------------------------------- |
+| #`name`  | Select everything whose name is `name`   |
 
-#### Attributes
 
-`[name=value]`, `[name!=value]`, `[name*=value]`, `[name^=value]` and `[name$=value]`
+#### Attribute selectors
 
-#### Pseudo-selectors
+| Syntax            | Description                                |
+| ----------------- | ------------------------------------------ |
+| [`name`=`value`]  | Attribute `name` is equal to `value`       |
+| [`name`!=`value`] | Attribute `name` is not equal to `value`   |
+| [`name`*=`value`] | Attribute `name` contains `value`          |
+| [`name`^=`value`] | Attribute `name` starts with `value`       |
+| [`name`$=`value`] | Attribute `name` endswith `value`          |
 
-| Name                  | Applies to        | Description                                                               |
-| --------------------- | ----------------- | ------------------------------------------------------------------------- |
-| :extends(`classname`) | `class`           | Selects classes that extends from `classname`                             |
-| :has(`selector`)      | _all_             | Selects elements which contain at least one element matching `selector`   |
-| :not(`selector`)      | _all_             | Selects elements that do not match `selector`                             |
+
+#### Pseudo selectors
+
+| Syntax                | Applies to        | Description                                        |
+| --------------------- | ----------------- | -------------------------------------------------- |
+| :extends(`classname`) | `class`           | Selects classes that extends from `classname`      |
+| :has(`selector`)      | _all_             | Selects everything that its body match `selector`  |
+| :not(`selector`)      | _all_             | Selects everything that do not match `selector`    |
 
 #### Combinators
 
-`parent > child`, `parent descendant`
+| Syntax                | Description                            |
+| --------------------- | -------------------------------------- |
+| `parent` > `child`    | Select direct `child` from `parent`    |
+| `parent` `descendant` | Selects all `descendant` from `parent` |
 
 
 ## Examples
