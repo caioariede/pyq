@@ -28,7 +28,7 @@ A command-line tool to search for Python code using jQuery-like selectors
 
 ##### Name
 
-`#classname` or `#methodname`
+`#classname` or `#functionname`
 
 #### Attributes
 
@@ -36,7 +36,11 @@ A command-line tool to search for Python code using jQuery-like selectors
 
 #### Pseudo-selectors
 
-`:extends(classname)` and `:not(selector)`
+| Name                  | Applies to        | Description                                                               |
+| --------------------- | ----------------- | ------------------------------------------------------------------------- |
+| :extends(`classname`) | `class`           | Selects classes that extends from `classname`                             |
+| :has(`selector`)      | _all_             | Selects elements which contain at least one element matching `selector`   |
+| :not(`selector`)      | _all_             | Selects elements that do not match `selector`                             |
 
 #### Combinators
 
@@ -83,4 +87,15 @@ Search for import statements importing `Counter`:
 django/apps/registry.py:5 from collections import Counter, OrderedDict, defaultdict
 django/template/utils.py:3 from collections import Counter, OrderedDict
 django/test/testcases.py:14 from collections import Counter
+...
+```
+
+Search for classes without methods:
+
+```python
+❯ pyq3 'class:not(:has(> def))' django/core
+django/core/exceptions.py:8 class FieldDoesNotExist(Exception):
+django/core/exceptions.py:13 class DjangoRuntimeWarning(RuntimeWarning):
+django/core/exceptions.py:17 class AppRegistryNotReady(Exception):
+...
 ```
