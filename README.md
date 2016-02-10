@@ -9,7 +9,7 @@ A command-line tool to search for Python code using jQuery-like selectors
 
     pip install pyqtool
 
-As the tool is still under heavy development, you may see that some features are not yet available in the version distributed over PyPI. If you want to have a fresh taste, you can get it directly from source:
+**Notice:** As the tool is still under heavy development, you may see that some features are not yet available in the version distributed over PyPI. If you want to have a fresh taste, you can get it directly from source:
 
     pip install https://github.com/caioariede/pyq/archive/master.zip
 
