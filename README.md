@@ -12,7 +12,7 @@ A command-line tool to search for Python code using jQuery-like selectors
 
 ## Usage
 
-    pyq2 [OPTIONS] SELECTOR [PATH]
+    pyq3 [OPTIONS] SELECTOR [PATH]
 
     Options:
     -l / --files  Only print filenames containing matches.
