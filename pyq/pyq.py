@@ -19,7 +19,7 @@ def search(selector, path):
             for fn in files:
                 if fn.endswith('.py'):
                     fn = os.path.join(root, fn)
-                    display_matches(m, selector, fn)
+                    display_matches(m, selector, os.path.relpath(fn))
     elif path.endswith('.py'):
         display_matches(m, selector, path)
 
