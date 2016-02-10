@@ -18,29 +18,46 @@ A command-line tool to search for Python code using jQuery-like selectors
 
 ## Available selectors
 
-##### Type
+##### Type selectors
 
-| Name   | Attributes                                     |
-| ------ | ---------------------------------------------- |
-| class  | class `name`                                   |
-| def    | def `name`                                     |
+| Name   | Attributes                                                                |
+| ------ | ------------------------------------------------------------------------- |
+| class  | class `name`                                                              |
+| def    | def `name`                                                                |
 | import | import `name`<br>import `name` as `name`<br>from `from` import `name`     |
 
-##### Name
+##### ID/Name selector
 
-`#classname` or `#methodname`
+| Syntax   | Description                              |
+| -------- | ---------------------------------------- |
+| #`name`  | Select everything whose name is `name`   |
 
-#### Attributes
 
-`[name=value]`, `[name!=value]`, `[name*=value]`, `[name^=value]` and `[name$=value]`
+#### Attribute selectors
 
-#### Pseudo-selectors
+| Syntax            | Description                                |
+| ----------------- | ------------------------------------------ |
+| [`name`=`value`]  | Attribute `name` is equal to `value`       |
+| [`name`!=`value`] | Attribute `name` is not equal to `value`   |
+| [`name`*=`value`] | Attribute `name` contains `value`          |
+| [`name`^=`value`] | Attribute `name` starts with `value`       |
+| [`name`$=`value`] | Attribute `name` endswith `value`          |
 
-`:extends(classname)` and `:not(selector)`
+
+#### Pseudo selectors
+
+| Syntax                | Applies to        | Description                                        |
+| --------------------- | ----------------- | -------------------------------------------------- |
+| :extends(`classname`) | `class`           | Selects classes that extends from `classname`      |
+| :has(`selector`)      | _all_             | Selects everything that its body match `selector`  |
+| :not(`selector`)      | _all_             | Selects everything that do not match `selector`    |
 
 #### Combinators
 
-`parent > child`, `parent descendant`
+| Syntax                | Description                            |
+| --------------------- | -------------------------------------- |
+| `parent` > `child`    | Select direct `child` from `parent`    |
+| `parent` `descendant` | Selects all `descendant` from `parent` |
 
 
 ## Examples
@@ -83,4 +100,15 @@ Search for import statements importing `Counter`:
 django/apps/registry.py:5 from collections import Counter, OrderedDict, defaultdict
 django/template/utils.py:3 from collections import Counter, OrderedDict
 django/test/testcases.py:14 from collections import Counter
+...
+```
+
+Search for classes without methods:
+
+```python
+❯ pyq3 'class:not(:has(> def))' django/core
+django/core/exceptions.py:8 class FieldDoesNotExist(Exception):
+django/core/exceptions.py:13 class DjangoRuntimeWarning(RuntimeWarning):
+django/core/exceptions.py:17 class AppRegistryNotReady(Exception):
+...
 ```
