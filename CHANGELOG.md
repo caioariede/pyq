@@ -3,6 +3,9 @@
 ## Current
 
 * Added CHANGELOG.md
+* Fixed bug when using ':extends()' without the type 'class' specified
+* Fixed bug when trying to match '#name' with a node that doesn't have a name
+  attribute
 
 
 ## 0.0.4 / 2016-02-10

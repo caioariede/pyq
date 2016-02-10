@@ -7,7 +7,7 @@ class Foo(object):
 
 
 class Bar(object):
-    pass
+    test = None
 
 
 class Bang:

@@ -43,7 +43,7 @@ class ASTMatchEngine(MatchEngine):
             return isinstance(node, (ast.Import, ast.ImportFrom))
 
     def match_id(self, id_, node):
-        return node.name == id_
+        return hasattr(node, 'name') and node.name == id_
 
     def match_attr(self, lft, op, rgt, node):
         if lft == 'from':

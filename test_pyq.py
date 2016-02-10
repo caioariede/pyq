@@ -135,6 +135,11 @@ class TestASTMatchEngine(unittest.TestCase):
         self.assertEqual(len(matches1), 1)
         self.assertEqual(len(matches2), 1)
 
+    def test_match_id(self):
+        matches = list(self.m.match('#Foo,#Baz', self.filepath('classes.py')))
+
+        self.assertEqual(len(matches), 2)
+
     def test_pseudo_extends(self):
         matches1 = list(self.m.match(':extends(object)',
                         self.filepath('classes.py')))
