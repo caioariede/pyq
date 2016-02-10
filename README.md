@@ -12,8 +12,13 @@ A command-line tool to search for Python code using jQuery-like selectors
 
 ## Usage
 
-    pyq2 [OPTIONS] SELECTOR [PATH]  # Python 2.x
-    pyq3 [OPTIONS] SELECTOR [PATH]  # Python 3.x
+    pyq2 [OPTIONS] SELECTOR [PATH]
+
+    Options:
+    -l / --files  Only print filenames containing matches.
+    --help        Show this message and exit.
+
+The executable name will vary depending on the Python version: `pyq2` `pyq3`
 
 
 ## Available selectors

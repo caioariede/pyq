@@ -9,8 +9,10 @@ from pygments.formatters.terminal import TerminalFormatter
 
 @click.command()
 @click.argument('selector')
+@click.option('-l/--files', is_flag=True,
+              help='Only print filenames containing matches.')
 @click.argument('path', type=click.Path(exists=True), default='.')
-def search(selector, path):
+def main(selector, path, **opts):
     path = click.format_filename(path)
     m = ASTMatchEngine()
 
@@ -19,33 +21,54 @@ def search(selector, path):
             for fn in files:
                 if fn.endswith('.py'):
                     fn = os.path.join(root, fn)
-                    display_matches(m, selector, os.path.relpath(fn))
+                    display_matches(m, selector, os.path.relpath(fn), opts)
     elif path.endswith('.py'):
-        display_matches(m, selector, path)
+        display_matches(m, selector, path, opts)
 
 
-def display_matches(m, selector, filename):
-    matches = list(m.match(selector, filename))
-    if matches:
-        with open(filename, 'rb') as f:
-            for match, lineno in matches:
-                f.seek(0)
-                i = 1
-                while True:
-                    line = f.readline()
-                    if not line:
-                        break
-                    if i == lineno:
-                        text = line.decode('utf-8')
-                        text = highlight(text, PythonLexer(), TerminalFormatter())  # noqa
-                        output = '{}:{} {}'.format(filename, i, text)
-                        click.echo(output, nl=False)
-                        break
-                    i += 1
+def display_matches(m, selector, filename, opts):
+    matches = matching_lines(m.match(selector, filename), filename)
+
+    if opts.get('l'):
+        files = {}
+        for line, no in matches:
+            if opts.get('l'):
+                if filename not in files:
+                    click.echo(filename)
+                    # do not repeat files
+                    files[filename] = True
+
+    else:
+        for line, no in matches:
+            text = highlight(line, PythonLexer(), TerminalFormatter())
+            output = '{}:{} {}'.format(filename, no, text)
+            click.echo(output, nl=False)
 
 
-def main():
-    search()
+def matching_lines(matches, filename):
+    fp = None
+    for match, lineno in matches:
+        if fp is None:
+            fp = open(filename, 'rb')
+        else:
+            fp.seek(0)
+
+        i = 1
+        while True:
+            line = fp.readline()
+
+            if not line:
+                break
+
+            if i == lineno:
+                text = line.decode('utf-8')
+                yield text, lineno
+                break
+
+            i += 1
+
+    if fp is not None:
+        fp.close()
 
 
 if __name__ == '__main__':
