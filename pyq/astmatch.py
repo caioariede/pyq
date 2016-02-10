@@ -20,7 +20,10 @@ class ASTMatchEngine(MatchEngine):
 
     @staticmethod
     def pseudo_extends(matcher, node, value):
-        for base in node.bases:
+        if not value:
+            return getattr(node, 'bases', None) == []
+
+        for base in getattr(node, 'bases', []):
             base_str = astor.to_source(base).rstrip()
             if base_str == value:
                 return True

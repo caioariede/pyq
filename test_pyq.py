@@ -135,5 +135,19 @@ class TestASTMatchEngine(unittest.TestCase):
         self.assertEqual(len(matches1), 1)
         self.assertEqual(len(matches2), 1)
 
+    def test_pseudo_extends(self):
+        matches1 = list(self.m.match(':extends(object)',
+                        self.filepath('classes.py')))
+
+        matches2 = list(self.m.match(':extends()',
+                        self.filepath('classes.py')))
+
+        matches3 = list(self.m.match(':extends(Unknown)',
+                        self.filepath('classes.py')))
+
+        self.assertEqual(len(matches1), 3)
+        self.assertEqual(len(matches2), 1)
+        self.assertEqual(len(matches3), 0)
+
 
 unittest.main(failfast=True)

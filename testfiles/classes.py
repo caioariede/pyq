@@ -10,7 +10,10 @@ class Bar(object):
     pass
 
 
-class Bang(object):
+class Bang:
     class Baz(object):
         def bar(self):
             pass
+
+
+import dummy_import
