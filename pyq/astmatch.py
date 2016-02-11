@@ -48,6 +48,13 @@ class ASTMatchEngine(MatchEngine):
         if typ == 'assign':
             return isinstance(node, ast.Assign)
 
+        if typ == 'call':
+            if isinstance(node, ast.Call):
+                return True
+
+            # Python 2.x compatibility
+            return hasattr(ast, 'Print') and isinstance(node, ast.Print)
+
     def match_id(self, id_, node):
         if isinstance(node, (ast.ClassDef, ast.FunctionDef)):
             return node.name == id_
@@ -57,6 +64,14 @@ class ASTMatchEngine(MatchEngine):
 
         if isinstance(node, ast.Assign):
             return any(self.match_id(id_, t) for t in node.targets)
+
+        if isinstance(node, ast.Call):
+            return self.match_id(id_, node.func)
+
+        if id_ == 'print' \
+                and hasattr(ast, 'Print') and isinstance(node, ast.Print):
+            # Python 2.x compatibility
+            return True
 
     def match_attr(self, lft, op, rgt, node):
         if lft == 'from':
@@ -94,6 +109,9 @@ class ASTMatchEngine(MatchEngine):
     def iter_data(self, data):
         for node in data:
             if isinstance(node, ast.Assign):
+                yield node.value, None
+
+            if isinstance(node, ast.Expr):
                 yield node.value, None
 
             yield node, getattr(node, 'body', None)

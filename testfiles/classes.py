@@ -6,7 +6,7 @@ class Foo(object):
         pass
 
 
-class Bar(object, X, Y):
+class Bar(object, X, Y, foo(bar)):
     test = None
 
 

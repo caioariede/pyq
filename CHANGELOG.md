@@ -5,8 +5,9 @@
 ### New features
 
 * Added CHANGELOG.md
-* Added support for the type `assign` (eg.: `assign#foo` will `foo = 1`)
+* Added support for the type `assign` (eg. `assign#foo` will match `foo = 1`)
 * Changed `extends()` pseudo-selector to receive a selector as argument
+* Added support for the type `call` (eg. `call#foo` will match `foo(1)`)
 
 
 ### Bug fixes
