@@ -13,7 +13,8 @@ class Bar(object):
 class Bang:
     class Baz(object):
         def bar(self):
-            pass
+            x = [0]
+            x[0] = 1
 
 
 import dummy_import

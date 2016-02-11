@@ -2,7 +2,14 @@
 
 ## Current
 
+### New features
+
 * Added CHANGELOG.md
+* Added support for the type 'assign' (eg.: assign#foo matches 'foo = 1')
+
+
+### Bug fixes
+
 * Fixed bug when using ':extends()' without the type 'class' specified
 * Fixed bug when trying to match '#name' with a node that doesn't have a name
   attribute

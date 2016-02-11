@@ -42,8 +42,18 @@ class ASTMatchEngine(MatchEngine):
         if typ == 'import':
             return isinstance(node, (ast.Import, ast.ImportFrom))
 
+        if typ == 'assign':
+            return isinstance(node, ast.Assign)
+
     def match_id(self, id_, node):
-        return hasattr(node, 'name') and node.name == id_
+        if isinstance(node, (ast.ClassDef, ast.FunctionDef)):
+            return node.name == id_
+
+        if isinstance(node, ast.Name):
+            return node.id == id_
+
+        if isinstance(node, ast.Assign):
+            return any(self.match_id(id_, t) for t in node.targets)
 
     def match_attr(self, lft, op, rgt, node):
         if lft == 'from':
@@ -80,4 +90,7 @@ class ASTMatchEngine(MatchEngine):
 
     def iter_data(self, data):
         for node in data:
+            if isinstance(node, ast.Assign):
+                yield node.value, None
+
             yield node, getattr(node, 'body', None)

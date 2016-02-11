@@ -36,6 +36,7 @@ The executable name will vary depending on the Python version: `pyq2` `pyq3`
 | class  | class `name`                                                              |
 | def    | def `name`                                                                |
 | import | import `name`<br>import `name` as `name`<br>from `from` import `name`     |
+| assign | `name` [, `name` ...] = value                                             |
 
 ##### ID/Name selector
 
