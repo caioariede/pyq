@@ -1,6 +1,6 @@
 # Changelog
 
-## Current
+## 0.0.5 / 2016-02-11
 
 ### New features
 
