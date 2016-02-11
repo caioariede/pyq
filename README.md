@@ -60,7 +60,7 @@ The executable name will vary depending on the Python version: `pyq2` `pyq3`
 
 | Syntax                | Applies to        | Description                                        |
 | --------------------- | ----------------- | -------------------------------------------------- |
-| :extends(`classname`) | `class`           | Selects classes that extends from `classname`      |
+| :extends(`selector`)  | `class`           | Selects classes that its bases matches `selector`  |
 | :has(`selector`)      | _all_             | Selects everything that its body match `selector`  |
 | :not(`selector`)      | _all_             | Selects everything that do not match `selector`    |
 
@@ -77,7 +77,7 @@ The executable name will vary depending on the Python version: `pyq2` `pyq3`
 Search for classes that extends the `IntegerField` class:
 
 ```python
-❯ pyq3 'class:extends(IntegerField)' django/forms
+❯ pyq3 'class:extends(#IntegerField)' django/forms
 django/forms/fields.py:278 class FloatField(IntegerField):
 django/forms/fields.py:315 class DecimalField(IntegerField):
 ```

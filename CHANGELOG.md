@@ -5,19 +5,20 @@
 ### New features
 
 * Added CHANGELOG.md
-* Added support for the type 'assign' (eg.: assign#foo matches 'foo = 1')
+* Added support for the type `assign` (eg.: `assign#foo` will `foo = 1`)
+* Changed `extends()` pseudo-selector to receive a selector as argument
 
 
 ### Bug fixes
 
-* Fixed bug when using ':extends()' without the type 'class' specified
-* Fixed bug when trying to match '#name' with a node that doesn't have a name
+* Fixed bug when using `:extends()` without the type `class` specified
+* Fixed bug when trying to match `#name` with a node that doesn't have a name
   attribute
 
 
 ## 0.0.4 / 2016-02-10
 
-* Added -l/--files option to print only files names
+* Added `-l/--files` option to print only files names
 
 
 ## 0.0.3 / 2016-02-09

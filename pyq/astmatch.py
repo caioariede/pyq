@@ -1,4 +1,5 @@
 from sizzle.match import MatchEngine
+from sizzle.selector import Selector
 
 import ast
 import astor
@@ -20,17 +21,19 @@ class ASTMatchEngine(MatchEngine):
 
     @staticmethod
     def pseudo_extends(matcher, node, value):
-        if not value:
-            return getattr(node, 'bases', None) == []
+        if not isinstance(node, ast.ClassDef):
+            return False
 
-        for base in getattr(node, 'bases', []):
-            base_str = astor.to_source(base).rstrip()
-            if base_str == value:
+        if not value:
+            return node.bases == []
+
+        bases = node.bases
+        selectors = value.split(',')
+
+        for selector in selectors:
+            matches = matcher.match_data(Selector.parse(selector)[0], bases)
+            if any(matches):
                 return True
-            elif '.' in base_str and value in base_str:
-                parts = base_str.split('.')
-                if value in parts:
-                    return True
 
     def match_type(self, typ, node):
         if typ == 'class':
