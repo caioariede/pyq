@@ -38,12 +38,13 @@ The executable name will vary depending on the Python version: `pyq2` `pyq3`
 | import | import `name`<br>import `name` as `name`<br>from `from` import `name`     |
 | assign | `name` [, `name` ...] = value                                             |
 | call   | `name`(*args, **kwargs)                                                   |
+| attr   | foo.`name`.`name`                                                         |
 
 ##### ID/Name selector
 
-| Syntax   | Description                              |
+| Syntax   | Applied to                               |
 | -------- | ---------------------------------------- |
-| #`name`  | Select everything whose name is `name`   |
+| #`name`  | `class`, `def`, `assign`, `call`, `attr` |
 
 
 #### Attribute selectors

@@ -48,6 +48,9 @@ class ASTMatchEngine(MatchEngine):
         if typ == 'assign':
             return isinstance(node, ast.Assign)
 
+        if typ == 'attr':
+            return isinstance(node, ast.Attribute)
+
         if typ == 'call':
             if isinstance(node, ast.Call):
                 return True
@@ -61,6 +64,9 @@ class ASTMatchEngine(MatchEngine):
 
         if isinstance(node, ast.Name):
             return node.id == id_
+
+        if isinstance(node, ast.Attribute):
+            return node.attr == id_
 
         if isinstance(node, ast.Assign):
             return any(self.match_id(id_, t) for t in node.targets)
@@ -108,10 +114,17 @@ class ASTMatchEngine(MatchEngine):
 
     def iter_data(self, data):
         for node in data:
-            if isinstance(node, ast.Assign):
-                yield node.value, None
+            for n in self.iter_node(node):
+                yield n
 
-            if isinstance(node, ast.Expr):
-                yield node.value, None
+    def iter_node(self, node):
+        silence = (ast.Expr,)
 
+        if not isinstance(node, silence):
             yield node, getattr(node, 'body', None)
+
+        if hasattr(node, 'value'):
+            # reversed is used here so matches are returned in the
+            # sequence they are read, eg.: foo.bar.bang
+            for n in reversed(list(self.iter_node(node.value))):
+                yield n

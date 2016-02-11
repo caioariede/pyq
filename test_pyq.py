@@ -160,6 +160,22 @@ class TestASTMatchEngine(unittest.TestCase):
         self.assertEqual(len(matches2), 2)
         self.assertEqual(len(matches3), 3)
 
+    def test_attrs(self):
+        matches1 = list(self.m.match('#bang', self.filepath('attrs.py')))
+        matches2 = list(self.m.match('attr#z', self.filepath('attrs.py')))
+        matches3 = list(self.m.match('attr', self.filepath('attrs.py')))
+        matches4 = list(self.m.match('#y', self.filepath('attrs.py')))
+
+        self.assertEqual(len(matches1), 1)
+        self.assertEqual(len(matches2), 1)
+        self.assertEqual(len(matches3), 4)
+        self.assertEqual(len(matches4), 1)
+
+        self.assertEqual(matches3[0][0].attr, 'bar')
+        self.assertEqual(matches3[1][0].attr, 'bang')
+        self.assertEqual(matches3[2][0].attr, 'y')
+        self.assertEqual(matches3[3][0].attr, 'z')
+
     def test_pseudo_extends(self):
         matches1 = list(self.m.match(':extends(#object)',
                         self.filepath('classes.py')))
@@ -179,12 +195,20 @@ class TestASTMatchEngine(unittest.TestCase):
         matches6 = list(self.m.match(':extends(#foo)',
                         self.filepath('classes.py')))
 
+        matches7 = list(self.m.match(':extends(attr#B)',
+                        self.filepath('classes.py')))
+
+        matches8 = list(self.m.match(':extends(#A):extends(attr#B)',
+                        self.filepath('classes.py')))
+
         self.assertEqual(len(matches1), 3)
         self.assertEqual(len(matches2), 1)
         self.assertEqual(len(matches3), 0)
         self.assertEqual(len(matches4), 3)
         self.assertEqual(len(matches5), 1)
         self.assertEqual(len(matches6), 1)
+        self.assertEqual(len(matches7), 1)
+        self.assertEqual(len(matches8), 1)
 
 
 unittest.main(failfast=True)

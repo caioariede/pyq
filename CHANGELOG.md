@@ -1,5 +1,12 @@
 # Changelog
 
+## Current
+
+### New features
+
+* Added type `attr` (eg. `attr#foo` will match `a.foo.bar` and `a.bar.foo`)
+
+
 ## 0.0.5 / 2016-02-11
 
 ### New features
