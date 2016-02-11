@@ -121,7 +121,19 @@ class ASTMatchEngine(MatchEngine):
         silence = (ast.Expr,)
 
         if not isinstance(node, silence):
-            yield node, getattr(node, 'body', None)
+            try:
+                body = node.body
+
+                # check if is iterable
+                list(body)
+
+            except TypeError:
+                body = [node.body]
+
+            except AttributeError:
+                body = None
+
+            yield node, body
 
         if hasattr(node, 'value'):
             # reversed is used here so matches are returned in the

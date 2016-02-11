@@ -6,6 +6,10 @@
 
 * Added type `attr` (eg. `attr#foo` will match `a.foo.bar` and `a.bar.foo`)
 
+### Bug fixed
+
+* Fixed bug when `node.body` is not an iterator (eg. lambdas)
+
 
 ## 0.0.5 / 2016-02-11
 
