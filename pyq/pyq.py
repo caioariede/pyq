@@ -11,19 +11,33 @@ from pygments.formatters.terminal import TerminalFormatter
 @click.argument('selector')
 @click.option('-l/--files', is_flag=True,
               help='Only print filenames containing matches.')
-@click.argument('path', type=click.Path(exists=True), default='.')
-def main(selector, path, **opts):
-    path = click.format_filename(path)
+@click.argument('path', nargs=-1)
+@click.pass_context
+def main(ctx, selector, path, **opts):
     m = ASTMatchEngine()
 
-    if os.path.isdir(path):
-        for root, dirs, files in os.walk(path):
-            for fn in files:
-                if fn.endswith('.py'):
-                    fn = os.path.join(root, fn)
-                    display_matches(m, selector, os.path.relpath(fn), opts)
-    elif path.endswith('.py'):
-        display_matches(m, selector, path, opts)
+    if len(path) == 0:
+        path = ['.']
+
+    for fn in walk_files(ctx, path):
+        display_matches(m, selector, os.path.relpath(fn), opts)
+
+
+def walk_files(ctx, paths):
+    for p in paths:
+        p = click.format_filename(p)
+
+        if p == '.' or os.path.isdir(p):
+            for root, dirs, files in os.walk(p):
+                for fn in files:
+                    if fn.endswith('.py'):
+                        yield os.path.join(root, fn)
+
+        elif not os.path.exists(p):
+            ctx.fail('{}: No such file or directory'.format(p))
+
+        else:
+            yield p
 
 
 def display_matches(m, selector, filename, opts):
@@ -40,8 +54,8 @@ def display_matches(m, selector, filename, opts):
 
     else:
         for line, no in matches:
-            text = highlight(line, PythonLexer(), TerminalFormatter())
-            output = '{}:{} {}'.format(filename, no, text)
+            text = highlight(line.strip(), PythonLexer(), TerminalFormatter())
+            output = '{}:{}  {}'.format(filename, no, text)
             click.echo(output, nl=False)
 
 

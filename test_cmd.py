@@ -28,17 +28,29 @@ class TestASTMatchEngine(unittest.TestCase):
         self.assertIn('Missing argument "selector"', result.output_bytes)
 
     def test_nodir(self):
-        result = self.runner.invoke(main, ['class'])
+        result = self.runner.invoke(main, ['def'])
         output = result.output_bytes.splitlines()
 
-        self.assertEqual(output[0], 'cmd.py:1 class Foo(object):')
-        self.assertEqual(output[1], 'cmd.py:6 class Bar(object):')
+        self.assertEqual(len(output), 4)
+        self.assertEqual(output[0], 'cmd.py:7  def foo(self):')
+        self.assertEqual(output[1], 'cmd.py:11  def baz(arg1, arg2):')
+        self.assertEqual(output[2], 'file2.py:1  def hello():')
+        self.assertEqual(output[3], '.test_hidden_dir/foo.py:1  def bar():')
+
+    def test_wildcard(self):
+        result = self.runner.invoke(main, ['def', 'cmd.py', 'file2.py'])
+        output = result.output_bytes.splitlines()
+
+        self.assertEqual(len(output), 3)
+        self.assertEqual(output[0], 'cmd.py:7  def foo(self):')
+        self.assertEqual(output[1], 'cmd.py:11  def baz(arg1, arg2):')
+        self.assertEqual(output[2], 'file2.py:1  def hello():')
 
     def test_file(self):
         result = self.runner.invoke(main, ['> def', 'cmd.py'])
         output = result.output_bytes.splitlines()
 
-        self.assertEqual(output[0], 'cmd.py:11 def baz(arg1, arg2):')
+        self.assertEqual(output[0], 'cmd.py:11  def baz(arg1, arg2):')
 
     def test_print_filenames(self):
         result = self.runner.invoke(main, ['-l', 'def'])
