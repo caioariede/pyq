@@ -7,23 +7,6 @@ Attr = namedtuple('Attr', 'lft op rgt')
 Pseudo = namedtuple('Pseudo', 'name value')
 
 
-class RE(object):
-    id = r'_?[A-Za-z0-9_]+|_'
-    ws = r'[\x20\t\r\n\f]*'
-    comma = '^{ws},{ws}'.format(ws=ws)
-    combinator = r'^{ws}([>+~ ]){ws}'.format(ws=ws)
-
-    type_selector = '({id})'.format(id=id)
-    id_selector = '#({id})'.format(id=id)
-    class_selector = r'\.(' + id + ')'
-    pseudo_selector = r'(:({id})\(([^()]+|(?1)?)\))'.format(id=id)
-    attr_selector = r'\[{ws}({id}){ws}([*^$|!~]?=)(.*?)\]'.format(id=id, ws=ws)
-
-    selector = '(?:(?:{typ})?({id}|{cls}|{pseudo}|{attr})+|{typ})'.format(
-        typ=id, id=id_selector, cls=class_selector, pseudo=pseudo_selector,
-        attr=attr_selector)
-
-
 class Selector(object):
     DESCENDANT = ' '
     CHILD = '>'
@@ -31,17 +14,34 @@ class Selector(object):
     ADJACENT = '+'
     NOT_SET = None
 
+    class RE(object):
+        id = r'_?[A-Za-z0-9_]+|_'
+        ws = r'[\x20\t\r\n\f]*'
+        comma = '^{ws},{ws}'.format(ws=ws)
+        combinator = r'^{ws}([>+~ ]){ws}'.format(ws=ws)
+
+        type_selector = '({id})'.format(id=id)
+        id_selector = '#({id})'.format(id=id)
+        class_selector = r'\.(' + id + ')'
+        pseudo_selector = r'(:({id})\(([^()]+|(?1)?)\))'.format(id=id)
+        attr_selector = r'\[{ws}({id}){ws}([*^$|!~]?=)(.*?)\]'.format(
+            id=id, ws=ws)
+
+        selector = '(?:(?:{typ})?({id}|{cls}|{pseudo}|{attr})+|{typ})'.format(
+            typ=id, id=id_selector, cls=class_selector, pseudo=pseudo_selector,
+            attr=attr_selector)
+
     def __init__(self, name, combinator=None):
         self.name = name
         self.combinator = combinator
         self.next_selector = None
 
         selector_patterns = {
-            'types': RE.type_selector,
-            'ids': RE.id_selector,
-            'classes': RE.class_selector,
-            'pseudos': RE.pseudo_selector,
-            'attrs': RE.attr_selector,
+            'types': self.RE.type_selector,
+            'ids': self.RE.id_selector,
+            'classes': self.RE.class_selector,
+            'pseudos': self.RE.pseudo_selector,
+            'attrs': self.RE.attr_selector,
         }
 
         matches = {}
@@ -82,22 +82,22 @@ class Selector(object):
     def __repr__(self):
         return 'Selector <{}>'.format(self.name)
 
-    @staticmethod
-    def parse(string):
+    @classmethod
+    def parse(cls, string):
         selectors = []
 
         combinator = None
         prev_selector = None
 
         while True:
-            match = regex.search(RE.comma, string)
+            match = regex.search(cls.RE.comma, string)
             if match:
                 # skip comma
                 _, pos = match.span()
                 string = string[pos:]
                 continue
 
-            match = regex.search(RE.combinator, string)
+            match = regex.search(cls.RE.combinator, string)
             if match:
                 _, pos = match.span()
                 combinator = string[:pos].strip()
@@ -105,12 +105,12 @@ class Selector(object):
             else:
                 combinator = None
 
-            match = regex.search(RE.selector, string)
+            match = regex.search(cls.RE.selector, string)
             if match:
                 _, pos = match.span()
                 seltext = string[:pos]
                 string = string[pos:]
-                selector = Selector(seltext, combinator=combinator)
+                selector = cls(seltext, combinator=combinator)
                 if combinator is not None and prev_selector:
                     prev_selector.next_selector = prev_selector = selector
                 else:

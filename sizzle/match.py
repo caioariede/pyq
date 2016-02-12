@@ -3,6 +3,7 @@ from .selector import Selector
 
 class MatchEngine(object):
     pseudo_fns = {}
+    selector_class = Selector
 
     def __init__(self):
         self.register_pseudo('not', self.pseudo_not)
@@ -13,16 +14,20 @@ class MatchEngine(object):
 
     @staticmethod
     def pseudo_not(matcher, node, value):
-        return not matcher.match_node(Selector.parse(value)[0], node)
+        return not matcher.match_node(matcher.parse_selector(value)[0], node)
 
     @staticmethod
     def pseudo_has(matcher, node, value):
         for node, body in matcher.iter_data([node]):
             if body:
-                return any(matcher.match_data(Selector.parse(value)[0], body))
+                return any(
+                    matcher.match_data(matcher.parse_selector(value)[0], body))
+
+    def parse_selector(self, selector):
+        return self.selector_class.parse(selector)
 
     def match(self, selector, data):
-        selectors = Selector.parse(selector)
+        selectors = self.parse_selector(selector)
         nodeids = {}
         for selector in selectors:
             for node in self.match_data(selector, data):
@@ -44,7 +49,7 @@ class MatchEngine(object):
                 else:
                     yield node
 
-            if body and not selector.combinator == Selector.CHILD:
+            if body and not selector.combinator == self.selector_class.CHILD:
                 for node in self.match_data(selector, body):
                     yield node
 
