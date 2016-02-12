@@ -150,6 +150,16 @@ class TestASTMatchEngine(unittest.TestCase):
         self.assertEqual(len(matches4), 1)
         self.assertEqual(len(matches5), 3)
 
+    def test_import_special_attr(self):
+        matches1 = list(self.m.match('import[full=foo.bar2]',
+                        self.filepath('imports.py')))
+
+        matches2 = list(self.m.match('import[full=foo.xyz]',
+                        self.filepath('imports.py')))
+
+        self.assertEqual(len(matches1), 1)
+        self.assertEqual(len(matches2), 1)
+
     def test_match_id(self):
         matches = list(self.m.match('#foo,#bar', self.filepath('ids.py')))
 

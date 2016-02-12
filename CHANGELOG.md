@@ -6,6 +6,8 @@
 
 * Added type `attr` (eg. `attr#foo` will match `a.foo.bar` and `a.bar.foo`)
 * Added support for wildcards
+* Added special attribute `full` to match imports: `import[full=x.z]` will
+  match `from x import y as z`
 
 ### Bug fixed
 

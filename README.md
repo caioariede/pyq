@@ -31,14 +31,14 @@ The executable name will vary depending on the Python version: `pyq2` `pyq3`
 
 ##### Type selectors
 
-| Name   | Attributes                                                                |
-| ------ | ------------------------------------------------------------------------- |
-| class  | class `name`                                                              |
-| def    | def `name`                                                                |
-| import | import `name`<br>import `name` as `name`<br>from `from` import `name`     |
-| assign | `name` [, `name` ...] = value                                             |
-| call   | `name`(\*args, \*\*kwargs)                                                |
-| attr   | foo.`name`.`name`                                                         |
+| Name   | Attributes                                                            | Additional notes                                                                  |
+| ------ | --------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| class  | class `name`                                                          |                                                                                   |
+| def    | def `name`                                                            |                                                                                   |
+| import | import `name`<br>import `name` as `name`<br>from `from` import `name` | It's also possible to match the full import using<br>the special attribute `full` |
+| assign | `name` [, `name` ...] = value                                         |                                                                                   |
+| call   | `name`(\*args, \*\*kwargs)                                            |                                                                                   |
+| attr   | foo.`name`.`name`                                                     |                                                                                   |
 
 ##### ID/Name selector
 

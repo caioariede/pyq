@@ -1,5 +1,4 @@
 from sizzle.match import MatchEngine
-from sizzle.selector import Selector
 
 import ast
 import astor
@@ -31,7 +30,8 @@ class ASTMatchEngine(MatchEngine):
         selectors = value.split(',')
 
         for selector in selectors:
-            matches = matcher.match_data(Selector.parse(selector)[0], bases)
+            matches = matcher.match_data(
+                matcher.parse_selector(selector)[0], bases)
             if any(matches):
                 return True
 
@@ -80,37 +80,48 @@ class ASTMatchEngine(MatchEngine):
             return True
 
     def match_attr(self, lft, op, rgt, node):
+        values = []
+
         if lft == 'from':
             if isinstance(node, ast.ImportFrom) and node.module:
-                lft = 'module'
-            else:
-                return False
+                values.append(node.module)
+
+        elif lft == 'full':
+            if isinstance(node, (ast.Import, ast.ImportFrom)):
+                module = ''
+                if isinstance(node, ast.ImportFrom):
+                    if node.module:
+                        module = node.module + '.'
+
+                for n in node.names:
+                    values.append(module + n.name)
+                    if n.asname:
+                        values.append(module + n.asname)
+
         elif lft == 'name':
             if isinstance(node, (ast.Import, ast.ImportFrom)):
                 for alias in node.names:
                     if alias.asname:
-                        if self.match_attr('asname', op, rgt, alias):
-                            return True
-                    if self.match_attr('name', op, rgt, alias):
-                        return True
-                return False
+                        values.append(alias.asname)
+                    values.append(alias.name)
 
-        value = getattr(node, lft, '')
+            elif hasattr(node, lft):
+                values.append(getattr(node, lft))
 
         if op == '=':
-            return value == rgt
+            return any(value == rgt for value in values)
 
         if op == '!=':
-            return value != rgt
+            return any(value != rgt for value in values)
 
         if op == '*=':
-            return rgt in value
+            return any(rgt in value for value in values)
 
         if op == '^=':
-            return value.startswith(rgt)
+            return any(value.startswith(rgt) for value in values)
 
         if op == '$=':
-            return value.endswith(rgt)
+            return any(value.endswith(rgt) for value in values)
 
         raise Exception('Attribute operator {} not implemented'.format(op))
 
