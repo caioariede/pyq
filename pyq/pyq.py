@@ -20,24 +20,25 @@ def main(ctx, selector, path, **opts):
         path = ['.']
 
     for fn in walk_files(ctx, path):
-        display_matches(m, selector, os.path.relpath(fn), opts)
+        if fn.endswith('.py'):
+            display_matches(m, selector, os.path.relpath(fn), opts)
 
 
 def walk_files(ctx, paths):
-    for p in paths:
+    for i, p in enumerate(paths):
         p = click.format_filename(p)
 
         if p == '.' or os.path.isdir(p):
             for root, dirs, files in os.walk(p):
                 for fn in files:
-                    if fn.endswith('.py'):
-                        yield os.path.join(root, fn)
+                    yield os.path.join(root, fn)
 
-        elif not os.path.exists(p):
-            ctx.fail('{}: No such file or directory'.format(p))
-
-        else:
+        elif os.path.exists(p):
             yield p
+
+        elif i == 0:
+            ctx.fail('{}: No such file or directory'.format(p))
+            break
 
 
 def display_matches(m, selector, filename, opts):
