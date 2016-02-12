@@ -81,8 +81,10 @@ class ASTMatchEngine(MatchEngine):
 
     def match_attr(self, lft, op, rgt, node):
         if lft == 'from':
-            if isinstance(node, ast.ImportFrom):
+            if isinstance(node, ast.ImportFrom) and node.module:
                 lft = 'module'
+            else:
+                return False
         elif lft == 'name':
             if isinstance(node, (ast.Import, ast.ImportFrom)):
                 for alias in node.names:
@@ -93,7 +95,7 @@ class ASTMatchEngine(MatchEngine):
                         return True
                 return False
 
-        value = getattr(node, lft, None)
+        value = getattr(node, lft, '')
 
         if op == '=':
             return value == rgt
