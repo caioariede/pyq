@@ -108,6 +108,13 @@ class ASTMatchEngine(MatchEngine):
             elif hasattr(node, lft):
                 values.append(getattr(node, lft))
 
+        elif lft in ('kwarg', 'arg'):
+            if isinstance(node, ast.Call):
+                if lft == 'kwarg':
+                    values = [kw.arg for kw in node.keywords]
+                elif lft == 'arg':
+                    values = [arg.id for arg in node.args]
+
         if op == '=':
             return any(value == rgt for value in values)
 

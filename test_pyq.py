@@ -185,6 +185,27 @@ class TestASTMatchEngine(unittest.TestCase):
         self.assertEqual(len(matches2), 2)
         self.assertEqual(len(matches3), 3)
 
+    def test_call_arg_kwarg(self):
+        matches1 = list(self.m.match('call[kwarg=a]',
+                        self.filepath('calls.py')))
+        matches2 = list(self.m.match('call[kwarg=x]',
+                        self.filepath('calls.py')))
+        matches3 = list(self.m.match('call[arg=bar]',
+                        self.filepath('calls.py')))
+        matches4 = list(self.m.match('[arg=bang]', self.filepath('calls.py')))
+
+        self.assertEqual(len(matches1), 1)
+        self.assertEqual(len(matches2), 2)
+        self.assertEqual(len(matches3), 2)
+        self.assertEqual(len(matches4), 2)
+
+        self.assertIsInstance(matches1[0][0], ast.Call)
+        self.assertIsInstance(matches2[0][0], ast.Call)
+        self.assertIsInstance(matches2[1][0], ast.Call)
+        self.assertIsInstance(matches3[0][0], ast.Call)
+        self.assertIsInstance(matches3[1][0], ast.Call)
+        self.assertIsInstance(matches4[0][0], ast.Call)
+
     def test_attrs(self):
         matches1 = list(self.m.match('#bang', self.filepath('attrs.py')))
         matches2 = list(self.m.match('attr#z', self.filepath('attrs.py')))

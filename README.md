@@ -37,7 +37,7 @@ The executable name will vary depending on the Python version: `pyq2` `pyq3`
 | def    | def `name`                                                            |                                                                                   |
 | import | import `name`<br>import `name` as `name`<br>from `from` import `name` | It's also possible to match the full import using<br>the special attribute `full` |
 | assign | `name` [, `name` ...] = value                                         |                                                                                   |
-| call   | `name`(\*args, \*\*kwargs)                                            |                                                                                   |
+| call   | `name`(`arg`, `arg`, ..., `kwarg`=, `kwarg`=, ...)                    |                                                                                   |
 | attr   | foo.`name`.`name`                                                     |                                                                                   |
 
 ##### ID/Name selector

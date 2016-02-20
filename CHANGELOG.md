@@ -8,6 +8,9 @@
 * Added support for wildcards
 * Added special attribute `full` to match imports: `import[full=x.z]` will
   match `from x import y as z`
+* Added ability to match calls with certain `arg` or `kwarg` (eg.
+  `call[arg=foo]` will match `bar(x, y, foo)`; `[kwarg=bar]` will match
+  `foo(bar=1, z=2)`
 
 ### Bug fixed
 
