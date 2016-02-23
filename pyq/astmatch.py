@@ -105,6 +105,13 @@ class ASTMatchEngine(MatchEngine):
                         values.append(alias.asname)
                     values.append(alias.name)
 
+            elif isinstance(node, ast.Call):
+                if hasattr(node.func, 'id'):
+                    values.append(node.func.id)
+
+            elif hasattr(ast, 'Print') and isinstance(node, ast.Print):
+                values.append('print')
+
             elif hasattr(node, lft):
                 values.append(getattr(node, lft))
 

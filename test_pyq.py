@@ -177,13 +177,16 @@ class TestASTMatchEngine(unittest.TestCase):
         self.assertEqual(matches2[0][1], 4)
 
     def test_calls(self):
-        matches1 = list(self.m.match('#print', self.filepath('calls.py')))
+        matches1 = list(
+            self.m.match('[name=print]', self.filepath('calls.py')))
         matches2 = list(self.m.match('call#foo', self.filepath('calls.py')))
         matches3 = list(self.m.match('call', self.filepath('calls.py')))
+        matches4 = list(self.m.match('[name=foo]', self.filepath('calls.py')))
 
         self.assertEqual(len(matches1), 1)
         self.assertEqual(len(matches2), 2)
-        self.assertEqual(len(matches3), 3)
+        self.assertEqual(len(matches3), 4)
+        self.assertEqual(len(matches4), 1)
 
     def test_call_arg_kwarg(self):
         matches1 = list(self.m.match('call[kwarg=a]',
