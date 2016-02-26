@@ -11,6 +11,10 @@ from pygments.formatters.terminal import TerminalFormatter
 @click.argument('selector')
 @click.option('-l/--files', is_flag=True,
               help='Only print filenames containing matches.')
+@click.option('--ignore-dir', multiple=True,
+              help='Ignore directory')
+@click.option('-n/--no-recurse', is_flag=True, default=False,
+              help='No descending into subdirectories')
 @click.argument('path', nargs=-1)
 @click.pass_context
 def main(ctx, selector, path, **opts):
@@ -19,17 +23,20 @@ def main(ctx, selector, path, **opts):
     if len(path) == 0:
         path = ['.']
 
-    for fn in walk_files(ctx, path):
+    ignore_dir = (opts['ignore_dir'], not opts['n'])
+    for fn in walk_files(ctx, path, ignore_dir):
         if fn.endswith('.py'):
             display_matches(m, selector, os.path.relpath(fn), opts)
 
 
-def walk_files(ctx, paths):
+def walk_files(ctx, paths, ignore_dir):
     for i, p in enumerate(paths):
         p = click.format_filename(p)
 
         if p == '.' or os.path.isdir(p):
             for root, dirs, files in os.walk(p):
+                if is_dir_ignored(root.lstrip('./'), *ignore_dir):
+                    continue
                 for fn in files:
                     yield os.path.join(root, fn)
 
@@ -84,6 +91,16 @@ def matching_lines(matches, filename):
 
     if fp is not None:
         fp.close()
+
+
+def is_dir_ignored(path, ignore_dir, recurse):
+    path = path.split(os.sep)
+    if not recurse:
+        return path[0] in ignore_dir
+    for p in path:
+        if p in ignore_dir:
+            return True
+    return False
 
 
 if __name__ == '__main__':

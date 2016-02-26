@@ -1,6 +1,6 @@
 # Changelog
 
-## Current
+## 0.0.6 / 2016-02-26
 
 ### New features
 
@@ -11,6 +11,7 @@
 * Added ability to match calls with certain `arg` or `kwarg` (eg.
   `call[arg=foo]` will match `bar(x, y, foo)`; `[kwarg=bar]` will match
   `foo(bar=1, z=2)`
+* Added `--ignore-dir` and `--no-recurse` options
 
 ### Bug fixed
 

@@ -1,5 +1,4 @@
 import os
-import click
 import unittest
 
 from click.testing import CliRunner
@@ -22,14 +21,17 @@ class TestASTMatchEngine(unittest.TestCase):
         # restore cwd
         os.chdir(self.currentdir)
 
+    def invoke(self, *args):
+        return self.runner.invoke(*args, catch_exceptions=False)
+
     def test_noargs(self):
-        result = self.runner.invoke(main, [])
+        result = self.invoke(main, [])
 
         self.assertNotEqual(result.exit_code, 0)
         self.assertIn('Missing argument "selector"', result.output_bytes)
 
     def test_nodir(self):
-        result = self.runner.invoke(main, ['def'])
+        result = self.invoke(main, ['def'])
         output = result.output_bytes.splitlines()
 
         self.assertEqual(result.exit_code, 0)
@@ -40,20 +42,19 @@ class TestASTMatchEngine(unittest.TestCase):
         self.assertEqual(output[3], '.test_hidden_dir/foo.py:1  def bar():')
 
     def test_notpyfile(self):
-        result = self.runner.invoke(main, ['def', 'notpyfile.txt'])
-        output = result.output_bytes.splitlines()
+        result = self.invoke(main, ['def', 'notpyfile.txt'])
 
         self.assertEqual(result.exit_code, 0)
 
     def test_file(self):
-        result = self.runner.invoke(main, ['> def', 'cmd.py'])
+        result = self.invoke(main, ['> def', 'cmd.py'])
         output = result.output_bytes.splitlines()
 
         self.assertEqual(result.exit_code, 0)
         self.assertEqual(output[0], 'cmd.py:11  def baz(arg1, arg2):')
 
     def test_wildcard(self):
-        result = self.runner.invoke(main, ['def', 'cmd.py', 'file2.py',
+        result = self.invoke(main, ['def', 'cmd.py', 'file2.py',
                                            'notpyfile.txt', 'nofile.unknown'])
         output = result.output_bytes.splitlines()
 
@@ -64,12 +65,39 @@ class TestASTMatchEngine(unittest.TestCase):
         self.assertEqual(output[2], 'file2.py:1  def hello():')
 
     def test_print_filenames(self):
-        result = self.runner.invoke(main, ['-l', 'def'])
+        result = self.invoke(main, ['-l', 'def'])
         output = result.output_bytes.splitlines()
 
         self.assertEqual(result.exit_code, 0)
         self.assertEqual(output[0], 'cmd.py')
         self.assertEqual(output[1], 'file2.py')
+
+    def test_ignoredir(self):
+        r = self.invoke(main, ['-l', 'class'])
+        output = r.output_bytes.splitlines()
+
+        self.assertEqual(r.exit_code, 0)
+        self.assertTrue(any('ignoredir' in p for p in output))
+
+        r = self.invoke(main, ['-l', 'class', '--ignore-dir', 'ignoredir'])
+        output = r.output_bytes.splitlines()
+
+        self.assertEqual(r.exit_code, 0)
+        self.assertFalse(any('ignoredir' in p for p in output))
+
+    def test_ignoredir_norecurse(self):
+        r = self.invoke(main, ['-l', 'class', '--ignore-dir', 'ignoredir2'])
+        output = r.output_bytes.splitlines()
+
+        self.assertEqual(r.exit_code, 0)
+        self.assertFalse(any('ignoredir2' in p for p in output))
+
+        r = self.invoke(main, ['-l', 'class', '--ignore-dir', 'ignoredir2',
+                               '-n'])
+        output = r.output_bytes.splitlines()
+
+        self.assertEqual(r.exit_code, 0)
+        self.assertTrue(any('ignoredir2' in p for p in output))
 
 
 if __name__ == '__main__':
