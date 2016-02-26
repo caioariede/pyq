@@ -166,15 +166,27 @@ class TestASTMatchEngine(unittest.TestCase):
         self.assertEqual(len(matches), 5)
 
     def test_assign(self):
-        matches1 = list(self.m.match('assign', self.filepath('ids.py')))
-        matches2 = list(self.m.match('assign#foo', self.filepath('ids.py')))
+        matches1 = list(self.m.match('assign', self.filepath('assign.py')))
+        matches2 = list(self.m.match('assign#foo', self.filepath('assign.py')))
+        matches3 = list(
+            self.m.match('assign[name=bar]', self.filepath('assign.py')))
+        matches4 = list(self.m.match('assign#b', self.filepath('assign.py')))
+        matches5 = list(
+            self.m.match('#abc,[name=abc]', self.filepath('assign.py')))
 
-        self.assertEqual(len(matches1), 2)
-        self.assertEqual(matches1[0][1], 4)
-        self.assertEqual(matches1[1][1], 5)
+        self.assertEqual(len(matches1), 6)
 
         self.assertEqual(len(matches2), 1)
-        self.assertEqual(matches2[0][1], 4)
+        self.assertEqual(matches2[0][1], 1)
+
+        self.assertEqual(len(matches3), 1)
+        self.assertEqual(matches3[0][1], 2)
+
+        self.assertEqual(len(matches4), 1)
+        self.assertEqual(matches4[0][1], 4)
+
+        self.assertEqual(len(matches5), 1)
+        self.assertEqual(matches5[0][1], 5)
 
     def test_calls(self):
         matches1 = list(

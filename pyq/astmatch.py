@@ -69,7 +69,17 @@ class ASTMatchEngine(MatchEngine):
             return node.attr == id_
 
         if isinstance(node, ast.Assign):
-            return any(self.match_id(id_, t) for t in node.targets)
+            for target in node.targets:
+                if hasattr(target, 'id'):
+                    if target.id == id_:
+                        return True
+                if hasattr(target, 'elts'):
+                    if id_ in self._extract_names_from_tuple(target):
+                        return True
+                elif isinstance(target, ast.Subscript):
+                    if hasattr(target.value, 'id'):
+                        if target.value.id == id_:
+                            return True
 
         if isinstance(node, ast.Call):
             return self.match_id(id_, node.func)
@@ -111,6 +121,16 @@ class ASTMatchEngine(MatchEngine):
 
             elif hasattr(ast, 'Print') and isinstance(node, ast.Print):
                 values.append('print')
+
+            elif isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if hasattr(target, 'id'):
+                        values.append(target.id)
+                    elif hasattr(target, 'elts'):
+                        values.extend(self._extract_names_from_tuple(target))
+                    elif isinstance(target, ast.Subscript):
+                        if hasattr(target.value, 'id'):
+                            values.append(target.value.id)
 
             elif hasattr(node, lft):
                 values.append(getattr(node, lft))
@@ -167,3 +187,13 @@ class ASTMatchEngine(MatchEngine):
             # sequence they are read, eg.: foo.bar.bang
             for n in reversed(list(self.iter_node(node.value))):
                 yield n
+
+    @classmethod
+    def _extract_names_from_tuple(cls, tupl):
+        r = []
+        for item in tupl.elts:
+            if hasattr(item, 'elts'):
+                r.extend(cls._extract_names_from_tuple(item))
+            else:
+                r.append(item.id)
+        return r
