@@ -2,7 +2,16 @@
 
 A command-line tool to search for Python code using jQuery-like selectors
 
-[![PyPI version](https://badge.fury.io/py/pyqtool.svg)](https://badge.fury.io/py/pyqtool)
+[![PyPI Version](http://badge.kloud51.com/pypi/v/pyqtool.svg)](https://pypi.python.org/pypi/pyqtool)
+[![PyPI Downloads](http://badge.kloud51.com/pypi/d/pyqtool.svg)](https://pypi.python.org/pypi/pyqtool)
+[![PyPI Wheel](http://badge.kloud51.com/pypi/w/pyqtool.svg)](https://pypi.python.org/pypi/pyqtool)
+[![PyPI Status](http://badge.kloud51.com/pypi/s/pyqtool.svg)](https://pypi.python.org/pypi/pyqtool)
+[![PyPI License](http://badge.kloud51.com/pypi/l/pyqtool.svg)](https://pypi.python.org/pypi/pyqtool)
+[![PyPI Format](http://badge.kloud51.com/pypi/f/pyqtool.svg)](https://pypi.python.org/pypi/pyqtool)
+[![PyPI Py Versions](http://badge.kloud51.com/pypi/py_versions/pyqtool.svg)](https://pypi.python.org/pypi/pyqtool)
+[![PyPI Egg](http://badge.kloud51.com/pypi/e/pyqtool.svg)](https://pypi.python.org/pypi/pyqtool)
+[![PyPI Implementation](http://badge.kloud51.com/pypi/i/pyqtool.svg)](https://pypi.python.org/pypi/pyqtool)
+
 
 
 ## Installation
