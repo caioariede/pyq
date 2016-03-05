@@ -197,8 +197,8 @@ class TestASTMatchEngine(unittest.TestCase):
 
         self.assertEqual(len(matches1), 1)
         self.assertEqual(len(matches2), 2)
-        self.assertEqual(len(matches3), 4)
-        self.assertEqual(len(matches4), 1)
+        self.assertEqual(len(matches3), 5)
+        self.assertEqual(len(matches4), 2)
 
     def test_call_arg_kwarg(self):
         matches1 = list(self.m.match('call[kwarg=a]',

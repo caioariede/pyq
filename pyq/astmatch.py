@@ -82,7 +82,8 @@ class ASTMatchEngine(MatchEngine):
                             return True
 
         if isinstance(node, ast.Call):
-            return self.match_id(id_, node.func)
+            if isinstance(node.func, ast.Name) and node.func.id == id_:
+                return True
 
         if id_ == 'print' \
                 and hasattr(ast, 'Print') and isinstance(node, ast.Print):
@@ -182,11 +183,13 @@ class ASTMatchEngine(MatchEngine):
 
             yield node, body
 
-        if hasattr(node, 'value'):
-            # reversed is used here so matches are returned in the
-            # sequence they are read, eg.: foo.bar.bang
-            for n in reversed(list(self.iter_node(node.value))):
-                yield n
+        for attr in ('value', 'func', 'right', 'left'):
+            if hasattr(node, attr):
+                value = getattr(node, attr)
+                # reversed is used here so matches are returned in the
+                # sequence they are read, eg.: foo.bar.bang
+                for n in reversed(list(self.iter_node(value))):
+                    yield n
 
     @classmethod
     def _extract_names_from_tuple(cls, tupl):

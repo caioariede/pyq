@@ -12,9 +12,11 @@ from pygments.formatters.terminal import TerminalFormatter
 @click.option('-l/--files', is_flag=True,
               help='Only print filenames containing matches.')
 @click.option('--ignore-dir', multiple=True,
-              help='Ignore directory')
+              help='Ignore directory.')
 @click.option('-n/--no-recurse', is_flag=True, default=False,
-              help='No descending into subdirectories')
+              help='No descending into subdirectories.')
+@click.option('-e/--expand', is_flag=True, default=False,
+              help='Show multiple matches in the same line.')
 @click.argument('path', nargs=-1)
 @click.pass_context
 def main(ctx, selector, path, **opts):
@@ -53,7 +55,7 @@ def display_matches(m, selector, filename, opts):
 
     if opts.get('l'):
         files = {}
-        for line, no in matches:
+        for line, no, _ in matches:
             if opts.get('l'):
                 if filename not in files:
                     click.echo(filename)
@@ -61,10 +63,17 @@ def display_matches(m, selector, filename, opts):
                     files[filename] = True
 
     else:
-        for line, no in matches:
+        lines = {}
+        for line, no, col in matches:
             text = highlight(line.strip(), PythonLexer(), TerminalFormatter())
-            output = '{}:{}  {}'.format(filename, no, text)
-            click.echo(output, nl=False)
+            if not opts['e']:
+                if no not in lines:
+                    lines[no] = True
+                    click.echo('{}:{}  {}'.format(filename, no, text),
+                               nl=False)
+            else:
+                click.echo('{}:{}:{}  {}'.format(filename, no, col, text),
+                           nl=False)
 
 
 def matching_lines(matches, filename):
@@ -84,7 +93,7 @@ def matching_lines(matches, filename):
 
             if i == lineno:
                 text = line.decode('utf-8')
-                yield text, lineno
+                yield text, lineno, match.col_offset
                 break
 
             i += 1

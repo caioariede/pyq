@@ -22,8 +22,9 @@ Please report any possible issues, we expect the master branch to be stable.
 
     Options:
     -l / --files       Only print filenames containing matches.
-    --ignore-dir TEXT  Ignore directory
-    -n / --no-recurse  No descending into subdirectories
+    --ignore-dir TEXT  Ignore directory.
+    -n / --no-recurse  No descending into subdirectories.
+    -e / --expand      Show multiple matches in the same line.
     --help             Show this message and exit.
 
 The executable name will vary depending on the Python version: `pyq2` `pyq3`

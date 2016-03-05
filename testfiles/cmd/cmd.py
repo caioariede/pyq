@@ -10,3 +10,6 @@ class Bar(object):
 
 def baz(arg1, arg2):
     pass
+
+
+foo() | bar()

@@ -1,5 +1,12 @@
 # Changelog
 
+## Current
+
+### New features
+
+* Added `--expand` option that allows showing multiples matches in the same
+  line
+
 ## 0.0.6 / 2016-02-26
 
 ### New features

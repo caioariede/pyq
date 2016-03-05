@@ -99,6 +99,22 @@ class TestASTMatchEngine(unittest.TestCase):
         self.assertEqual(r.exit_code, 0)
         self.assertTrue(any('ignoredir2' in p for p in output))
 
+    def test_expand_matches(self):
+        r1 = self.invoke(main, ['call', 'cmd.py'])
+        r2 = self.invoke(main, ['-e', 'call', 'cmd.py'])
+
+        output1 = r1.output_bytes.splitlines()
+        output2 = r2.output_bytes.splitlines()
+
+        self.assertEqual(r1.exit_code, 0)
+        self.assertEqual(len(output1), 1)
+        self.assertEqual(output1[0], 'cmd.py:15  foo() | bar()')
+
+        self.assertEqual(r2.exit_code, 0)
+        self.assertEqual(len(output2), 2)
+        self.assertEqual(output2[0], 'cmd.py:15:0  foo() | bar()')
+        self.assertEqual(output2[1], 'cmd.py:15:8  foo() | bar()')
+
 
 if __name__ == '__main__':
     unittest.main()
