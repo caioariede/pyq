@@ -102,9 +102,11 @@ class TestASTMatchEngine(unittest.TestCase):
     def test_expand_matches(self):
         r1 = self.invoke(main, ['call', 'cmd.py'])
         r2 = self.invoke(main, ['-e', 'call', 'cmd.py'])
+        r3 = self.invoke(main, ['-el', 'call', 'cmd.py'])
 
         output1 = r1.output_bytes.splitlines()
         output2 = r2.output_bytes.splitlines()
+        output3 = r3.output_bytes.splitlines()
 
         self.assertEqual(r1.exit_code, 0)
         self.assertEqual(len(output1), 1)
@@ -114,6 +116,10 @@ class TestASTMatchEngine(unittest.TestCase):
         self.assertEqual(len(output2), 2)
         self.assertEqual(output2[0], 'cmd.py:15:0  foo() | bar()')
         self.assertEqual(output2[1], 'cmd.py:15:8  foo() | bar()')
+
+        self.assertEqual(r3.exit_code, 0)
+        self.assertEqual(len(output3), 1)
+        self.assertEqual(output3[0], 'cmd.py')
 
 
 if __name__ == '__main__':
