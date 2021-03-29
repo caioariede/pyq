@@ -32,7 +32,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'click==6.2',
-        'Pygments==2.1',
+        'Pygments==2.7.4',
         'regex==2016.1.10',
         'astor==0.5',
     ]
